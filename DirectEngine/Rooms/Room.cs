@@ -79,10 +79,13 @@ namespace DirectEngine.Rooms
             Draw_WorldMatrixCalculation();
             Matrix childWorldModif = worldModif * WorldMatrix;
 
+            
+            game.PushShader(RoomManager.Shader);
             List<DrawableObj> list = new List<DrawableObj>(objDict.Values);
             list.Sort();
             foreach (DrawableObj toDraw in list)
                 toDraw.Draw(childWorldModif);
+            game.PopShader();
         }
 
         public List<DrawableObj> GetDrawablePart()

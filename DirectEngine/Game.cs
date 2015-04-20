@@ -423,8 +423,8 @@ namespace DirectEngine
         private Stack<Viewport> viewportStack = new Stack<Viewport>();
         public void PushViewport(Viewport viewport)
         {
-            if (viewportStack.Count > 0 && viewportStack.Peek() == viewport)
-                return;
+            /*if (viewportStack.Count > 0 && viewportStack.Peek() == viewport)
+                return;*/
             viewportStack.Push(viewport);
             context.Rasterizer.SetViewport(viewport);
             _2DShader.ScreenSize = new Vector2(viewport.Width, viewport.Height);

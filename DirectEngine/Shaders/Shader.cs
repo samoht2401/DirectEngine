@@ -10,6 +10,22 @@ using SharpDX.DXGI;
 
 namespace DirectEngine.Shaders
 {
+    public struct MapData
+    {
+        public float Width;
+        public float Height;
+        public float InvW;
+        public float InvH;
+
+        public MapData(float width, float height)
+        {
+            Width = width;
+            Height = height;
+            InvW = 1.0f / Width;
+            InvH = 1.0f / Height;
+        }
+    }
+
     public abstract class Shader : IDisposable
     {
         public Game Game { protected set; get; }
@@ -28,7 +44,7 @@ namespace DirectEngine.Shaders
             vertexShader = new VertexShader(Game.Device, vertexShaderByteCode);
             CompilationResult pixelShaderByteCode = ShaderBytecode.CompileFromFile(path, "PS", "ps_4_0", ShaderFlags.None, EffectFlags.None);
             pixelShader = new PixelShader(Game.Device, pixelShaderByteCode);
-            
+
             // Layout from VertexShader input signature
             layout = new InputLayout(Game.Device, ShaderSignature.GetInputSignature(vertexShaderByteCode), layoutElems);
 
@@ -64,10 +80,7 @@ namespace DirectEngine.Shaders
             Game.Context.PixelShader.Set(pixelShader);
             LinkSampler();
         }
-        protected internal virtual void LinkConstantBuffer()
-        {
-
-        }
+        protected internal virtual void LinkConstantBuffer() { }
         protected internal virtual void LinkSampler() { }
 
         public virtual void SetViewProjMatrix(Matrix matrix) { }
