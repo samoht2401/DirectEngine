@@ -19,8 +19,9 @@ namespace DirectEngine.Shaders
             new InputElement[]
             {
                 new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, Utilities.SizeOf<Vector4>(), 0),
-                new InputElement("TEXCOORD", 0, Format.R32G32_Float, Utilities.SizeOf<Vector4>() * 2, 0)
+                new InputElement("TEXCOORD", 0, Format.R32G32_Float, Utilities.SizeOf<Vector3>(), 0),
+                new InputElement("NORMAL", 0, Format.R32G32B32A32_Float, Utilities.SizeOf<Vector3>() + Utilities.SizeOf<Vector2>(), 0),
+                new InputElement("TANGENT", 0, Format.R32G32B32A32_Float, Utilities.SizeOf<Vector3>() * 2 + Utilities.SizeOf<Vector2>(), 0)
             }) { }
 
         protected internal override void CreateSampler()

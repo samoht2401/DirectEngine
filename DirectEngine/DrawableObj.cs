@@ -146,7 +146,7 @@ namespace DirectEngine
             if (needWorldMatrixUpdate)
             {
                 if (Use2DPosModif)
-                    worldMatrix = Matrix.Scaling(Scale) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(Position + new Vector3(-game.Viewport.Width + Scale.X, game.Viewport.Height - Scale.Y, 0));
+                    worldMatrix = Matrix.Scaling(Scale) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(Position/*+ new Vector3(-game.Viewport.Width + Scale.X, game.Viewport.Height - Scale.Y, 0)*/);
                 else
                     worldMatrix = Matrix.Scaling(Scale) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(Position);
                 needWorldMatrixUpdate = false;

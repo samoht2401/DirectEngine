@@ -108,8 +108,8 @@ namespace DirectEngine.Texte
                 for (int m = 0; m < s.Length; m++)
                 {
                     char c = s[m];
-
                     currentX += 2f / texture.Width;
+
                     float charWidth = (float)font.GetCharWidth(c) / texture.Width * 2;
                     float charHeight = (float)font.Height / texture.Height * 2;
 

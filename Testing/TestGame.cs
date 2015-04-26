@@ -12,6 +12,7 @@ using DirectEngine.Rooms;
 using DirectEngine.Input;
 using DirectEngine.Cameras;
 using DirectEngine.Shaders;
+using DirectEngine.Physic;
 
 namespace Testing
 {
@@ -32,6 +33,9 @@ namespace Testing
         Portal portalTo2;
         Font font;
         DirectionalCamera cam;
+
+        PhysicManager physicManager;
+        DynamiqueSolid solid;
 
         public TestGame()
             : base("BaseEffect.fx")
@@ -83,6 +87,16 @@ namespace Testing
             cam = new DirectionalCamera(new Vector3(0, 0, -2), new Vector3(0, 0, 1), new Vector3(0, 1, 0), Viewport);
             Camera = cam;
             Camera.Position = Vector3.UnitZ * 6;
+
+            physicManager = new PhysicManager();
+            physicManager.AddSolidPlane(new SolidPlane(new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1), 100, 100));
+            physicManager.AddSolidPlane(new SolidPlane(new Vector3(0, 0, 10), new Vector3(0, 0, -1), new Vector3(0, 1, 0), 20, 10));
+            physicManager.AddSolidPlane(new SolidPlane(new Vector3(0, 0, -10), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 20, 10));
+            physicManager.AddSolidPlane(new SolidPlane(new Vector3(10, 0, 0), new Vector3(-1, 0, 0), new Vector3(0, 1, 0), 20, 10));
+            physicManager.AddSolidPlane(new SolidPlane(new Vector3(-10, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), 20, 10));
+            solid = new DynamiqueSolid(new Vector3(0, 2, -2), 1, Vector3.Zero);
+            solid.SetAcceleration("Gravity", new Vector3(0, -1, 0));
+            physicManager.LinkDynamiqueSolid("Camera", solid);
         }
 
         Vector2 lightAngle = Vector2.Zero;
@@ -91,6 +105,28 @@ namespace Testing
             base.Update(elapsed, totalElapsed);
             float elap = (float)elapsed.TotalMilliseconds;
             float e = (float)totalElapsed.TotalMilliseconds / 1000;
+
+            Keyboard keyboard = InputManager.Keyboard;
+            Mouse mouse = InputManager.Mouse;
+
+            Vector3 acc = Vector3.Zero;
+            float speed = 10;
+            if (keyboard.IsPressed(Key.W))
+                acc += cam.Direction;
+            if (keyboard.IsPressed(Key.S))
+                acc -= cam.Direction;
+            if (keyboard.IsPressed(Key.A))
+                acc += Vector3.Cross(cam.Direction, cam.Up);
+            if (keyboard.IsPressed(Key.D))
+                acc -= Vector3.Cross(cam.Direction, cam.Up);
+            acc.Y = 0;
+            acc.Normalize();
+            acc *= speed;
+            solid.SetAcceleration("Keyboard", acc);
+
+            physicManager.Update(elapsed, totalElapsed);
+
+            cam.Position = solid.Position;
 
             //second.Position4 = Vector4.Transform(new Vector4(0, 0, 0, 1), Matrix.Translation(4, 0, 0) * Matrix.RotationY((float)Math.Pow(Math.Cos(e * 0.2f), 3) * (float)Math.PI + (float)Math.PI / 2f)) + new Vector4(0, 0, 4, 1);
             first.Rotation = Quaternion.RotationYawPitchRoll(0.1f * e, 0.2f * e, 0.4f * e);
@@ -103,11 +139,12 @@ namespace Testing
             norm.Z = (float)Math.Sin(rot);
             //portalTo2.Room1Normal = norm;
 
-            Keyboard keyboard = InputManager.Keyboard;
-            Mouse mouse = InputManager.Mouse;
+
             //cam.RotViewXY(new Vector2(0.01f * -elap * 0.01f, 0 * -elap * 0.01f));
+            Vector3 camInitPos = cam.Position;
+
             cam.RotViewXY(new Vector2(mouse.GetOffsetX() * 0.01f, mouse.GetOffsetY() * 0.01f));
-            if (keyboard.IsPressed(Key.W))
+            /*if (keyboard.IsPressed(Key.W))
                 cam.MoveForward(elap * 0.01f);
             if (keyboard.IsPressed(Key.S))
                 cam.MoveForward(-elap * 0.01f);
@@ -118,6 +155,9 @@ namespace Testing
             Vector3 yAjust = cam.Position;
             yAjust.Y = 2;
             cam.Position = yAjust;
+
+            Vector3 camEndPos = cam.Position;
+            Vector3 camMouv = camEndPos - camInitPos;*/
 
             roomManager.UpdatePointOfView(Camera);
 
@@ -170,7 +210,7 @@ namespace Testing
             //RenderRegisteredObj();
             //ground.Draw(Camera.ViewProjMatrix);
             //model1.Draw();
-            roomManager.MakeRender();
+           roomManager.MakeRender();
             //List<DrawableObj> list = new List<DrawableObj>();
             //list.Add(room1);
             //list.Add(room2);
@@ -207,7 +247,7 @@ namespace Testing
                 fpsTab[fpsIndex] = (float)(1000 / elapsed.TotalMilliseconds);
                 fpsIndex++;
             }
-            BindTexture(fpsText.GetShaderResourceView(), "fps");
+            BindTexture(fpsText);
             DrawablePlane plane = new DrawablePlane(this, null, null, false);
             //plane.Position = new Vector3(-Viewport.Width + 500, Viewport.Height - 100, 0);
             plane.Use2DPosModif = true;
@@ -221,11 +261,12 @@ namespace Testing
                                                                                  "Z : " + InputManager.Mouse.GetOffsetX(),
                                                                                  "Xoff : " + InputManager.Mouse.GetOffsetX(),
                                                                                  "Yoff : " + InputManager.Mouse.GetOffsetY(),});
-            BindTexture(mouse.GetShaderResourceView(), "mouse");
+            mouse.SaveToFile("fps.png");
+            BindTexture(mouse);
             plane = new DrawablePlane(this, null, null, false);
 
             plane.Use2DPosModif = true;
-            plane.Position = new Vector3(0, -100, 0);
+            plane.Position = new Vector3(0, 100, 0);
             plane.Scale = new Vector3(mouse.Width * 3, mouse.Height * 3, 1);
             plane.Draw();
 

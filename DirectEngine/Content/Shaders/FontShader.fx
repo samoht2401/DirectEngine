@@ -1,8 +1,9 @@
 ﻿struct VS_IN
 {
 	float4 pos : POSITION;
-	float4 norm : NORMAL;
 	float4 texCoord : TEXCOORD;
+	float4 normal : NORMAL;
+	float4 tangent : TANGENT;
 };
 
 struct PS_IN
@@ -20,6 +21,7 @@ PS_IN VS(VS_IN input)
 	PS_IN output = (PS_IN)0;
 
 	output.pos = input.pos;
+	output.pos.w = 1;
 	output.texCoord = input.texCoord;
 
 	return output;

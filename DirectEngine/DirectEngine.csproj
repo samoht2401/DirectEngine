@@ -90,6 +90,9 @@
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Logic\ILogicObj.cs" />
+    <Compile Include="Physic\DynamiqueSolid.cs" />
+    <Compile Include="Physic\PhysicManager.cs" />
+    <Compile Include="Physic\SolidPlane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderToTexture.cs" />
     <Compile Include="Rooms\Portal.cs" />
